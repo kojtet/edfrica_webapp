@@ -1,50 +1,50 @@
-// import original module declarations
-import 'styled-components'
+import 'styled-components';
 
 export interface Theme {
   colors: {
-    primaryText: string
-    secondaryText: string
-    themeText: string
-    themeColor: string
-    themeGradient: string
-    background: string
-    cardBackground: string
-    selectTopicBg: string
-    appLogo: string
-    buttonText: string
-    outlineButtonText: string
-    buttonBackground: string
-    selectedAnswer: string
-    infoText: string
-    infoBackground: string
-    border: string
-    answerBg: string
-    disabledCard: string
-    disabledButton: string
-    success: string
-    successLight: string
-    danger: string
-    dangerLight: string
-    white: string
-    black: string
-    dark: string
-    darkGray: string
-    darkerGray: string
-  }
+    primaryText: string;
+    secondaryText: string;
+    themeText: string;
+    themeColor: string;
+    themeColorDark: string; // Add this line
+    themeGradient: string;
+    background: string;
+    cardBackground: string;
+    selectTopicBg: string;
+    appLogo: string;
+    buttonText: string;
+    outlineButtonText: string;
+    buttonBackground: string;
+    selectedAnswer: string;
+    infoText: string;
+    infoBackground: string;
+    border: string;
+    answerBg: string;
+    disabledCard: string;
+    disabledButton: string;
+    success: string;
+    successLight: string;
+    danger: string;
+    dangerLight: string;
+    white: string;
+    black: string;
+    dark: string;
+    darkGray: string;
+    darkerGray: string;
+  };
   fonts: {
-    anekMalayalam: string
-  }
+    anekMalayalam: string;
+  };
   shadows: {
-    activeButton: string
-  }
+    activeButton: string;
+  };
   paddings: {
-    container: string
-    pageTop: string
-  }
+    container: string;
+    pageTop: string;
+  };
   margins: {
-    pageTop: string
-  }
+    pageTop: string;
+  };
 }
 
 declare module 'styled-components' {

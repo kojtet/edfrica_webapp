@@ -1,23 +1,27 @@
-import { Theme } from './styled'
+import { Theme } from './styled';
+
+const mainColor = '#800080'; // Replace this with the actual color from your logo text
+const mainColorDark = '#660066'; // A darker shade for hover effect
 
 export const themes: Record<string, Theme> = {
   light: {
     colors: {
-      primaryText: '#11052C', // question text color
-      secondaryText: '#2D264B', // answer text color
+      primaryText: '#11052C',
+      secondaryText: '#2D264B',
       themeText: '#000000',
-      themeColor: '#800080',
-      themeGradient: 'linear-gradient(to right,#800080, #FFC0CB)',
+      themeColor: mainColor,
+      themeColorDark: mainColorDark, // Add this
+      themeGradient: `linear-gradient(to right, ${mainColor}, #FFC0CB)`,
       background: '#E5E5E5',
       cardBackground: '#FFFFFF',
       selectTopicBg: '#FFFFFF',
       appLogo: '#000000',
       buttonText: '#FFFFFF',
-      outlineButtonText: '#800080',
-      buttonBackground: 'linear-gradient(90.04deg, #800080 0.03%, #FFC0CB 99.96%)',
+      outlineButtonText: mainColor,
+      buttonBackground: `linear-gradient(90.04deg, ${mainColor} 0.03%, #FFC0CB 99.96%)`,
       selectedAnswer: '#FFD6FF',
-      infoText: '#FF783F', // skip tag text
-      infoBackground: '#ffb23f26', // skip tag background
+      infoText: '#FF783F',
+      infoBackground: '#ffb23f26',
       border: '#EAEAEA',
       answerBg: '#ffffff',
       disabledCard: '#fbf4ecbc',
@@ -48,21 +52,22 @@ export const themes: Record<string, Theme> = {
   },
   dark: {
     colors: {
-      primaryText: '#FFFFFF', // question text color
-      secondaryText: '#FFFFFF', // answer text color
+      primaryText: '#FFFFFF',
+      secondaryText: '#FFFFFF',
       themeText: '#FFFFFF',
-      themeColor: '#C000C0',
-      themeGradient: 'linear-gradient(90deg, #0e050e 0%, #281e20 100%)',
-      background: 'linear-gradient(90deg, #0e050e 0%, #281e20 100%)',
+      themeColor: mainColor,
+      themeColorDark: mainColorDark, // Add this
+      themeGradient: `linear-gradient(90deg, #0e050e 0%, #281e20 100%)`,
+      background: `linear-gradient(90deg, #0e050e 0%, #281e20 100%)`,
       cardBackground: '#241a1a',
       selectTopicBg: '#21191C',
       appLogo: '#FFFFFF',
       buttonText: '#000000',
       outlineButtonText: '#ffffff',
-      buttonBackground: 'linear-gradient(90.04deg, #800080 0.03%, #FFC0CB 99.96%)',
+      buttonBackground: `linear-gradient(90.04deg, ${mainColor} 0.03%, #FFC0CB 99.96%)`,
       selectedAnswer: '#151113',
-      infoText: '#FF783F', // skip tag text
-      infoBackground: '#ffb23f26', // skip tag background
+      infoText: '#FF783F',
+      infoBackground: '#ffb23f26',
       border: 'transparent',
       answerBg: '#151113',
       disabledCard: '#00000080',
@@ -91,4 +96,4 @@ export const themes: Record<string, Theme> = {
       pageTop: '30px',
     },
   },
-}
+};

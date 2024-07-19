@@ -1,51 +1,51 @@
-import { useEffect, useState } from 'react'
-import styled from 'styled-components'
-
-import { AppLogo } from '../../config/icons'
-import { PageCenter } from '../../styles/Global'
+import { useEffect, useState } from 'react';
+import styled from 'styled-components';
+import logo from '../../assets/ed1.png'; // Adjust the path if necessary
+import { PageCenter } from '../../styles/Global';
 
 interface LogoAnimationProps {
-  logoSize: string
+  logoSize: string;
 }
 
-const LogoAnimation = styled.div<LogoAnimationProps>`
-  svg {
-    width: ${({ logoSize }) => logoSize};
+const LogoAnimation = styled.div<{ logoSize: string }>`
+  img {
+    width: ${(props) => props.logoSize};
     transition: width 1s;
   }
-`
+`;
 
 const SplashScreen = () => {
-  const [logoSize, setLogoSize] = useState('80px')
+  const [logoSize, setLogoSize] = useState('80px');
 
   useEffect(() => {
     const handleResize = () => {
       if (window.innerWidth < 900) {
-        setLogoSize('240px')
+        setLogoSize('240px');
       } else {
-        setLogoSize('350px')
+        setLogoSize('350px');
       }
-    }
+    };
 
     // Set initial logo size
-    handleResize()
+    handleResize();
 
     // Update logo size on window resize
-    window.addEventListener('resize', handleResize)
+    window.addEventListener('resize', handleResize);
 
     // Clean up event listener on component unmount
     return () => {
-      window.removeEventListener('resize', handleResize)
-    }
-  }, [])
+      window.removeEventListener('resize', handleResize);
+    };
+  }, []);
 
   return (
     <PageCenter justifyCenter>
       <LogoAnimation logoSize={logoSize}>
-        <AppLogo />
+        <img src={logo} alt="Edfrica Logo" />
       </LogoAnimation>
+      <h1>Edfrica: AI Powered Learning</h1>
     </PageCenter>
-  )
-}
+  );
+};
 
-export default SplashScreen
+export default SplashScreen;
