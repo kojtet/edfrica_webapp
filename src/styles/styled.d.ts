@@ -6,7 +6,7 @@ export interface Theme {
     secondaryText: string;
     themeText: string;
     themeColor: string;
-    themeColorDark: string; // Add this line
+    themeColorDark: string;
     themeGradient: string;
     background: string;
     cardBackground: string;
@@ -26,6 +26,7 @@ export interface Theme {
     successLight: string;
     danger: string;
     dangerLight: string;
+    dangerDark: string; // Add this line
     white: string;
     black: string;
     dark: string;

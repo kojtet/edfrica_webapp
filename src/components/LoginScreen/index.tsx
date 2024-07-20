@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import styled from 'styled-components';
 import logo from '../../assets/ed1.png';
+import { useAuth } from '../../context/AuthContext';
 
 const Container = styled.div`
   display: flex;
@@ -63,17 +64,24 @@ const Button = styled.button`
   }
 `;
 
-interface LoginScreenProps {
+const ErrorMessage = styled.div`
+  color: red;
+  margin-top: 20px;
+`;
 
-}
-
-const LoginScreen: React.FC<LoginScreenProps> = () => {
+const LoginScreen: React.FC = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [error, setError] = useState<string | null>(null);
+  const { login } = useAuth();
 
-  const handleLogin = () => {
-    // Add your login logic here
-   
+  const handleLogin = async () => {
+    try {
+      setError(null);
+      await login(email, password);
+    } catch (error) {
+      setError('Login failed. Please check your email and password.');
+    }
   };
 
   return (
@@ -95,6 +103,7 @@ const LoginScreen: React.FC<LoginScreenProps> = () => {
           onChange={(e) => setPassword(e.target.value)}
         />
         <Button onClick={handleLogin}>Login</Button>
+        {error && <ErrorMessage>{error}</ErrorMessage>}
       </FormContainer>
     </Container>
   );

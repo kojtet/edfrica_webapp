@@ -1,22 +1,10 @@
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
-import axios from 'axios';
+import { createClient, User, Session } from '@supabase/supabase-js';
 
-interface User {
-  id: string;
-  email: string;
-  display_name: string;
-  first_name: string;
-  last_name: string;
-  phone_number: string;
-  school_id: string;
-  faculty_id: string;
-  user_type: string;
-  created_at: string;
-  rankings: boolean;
-  expiration_time: string | null;
-  active: boolean;
-  first_login: boolean;
-}
+const supabaseUrl = process.env.REACT_APP_SUPABASE_URL || '';
+const supabaseAnonKey = process.env.REACT_APP_SUPABASE_ANON_KEY || '';
+
+const supabase = createClient(supabaseUrl, supabaseAnonKey);
 
 interface AuthContextType {
   user: User | null;
@@ -32,35 +20,40 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
   const [token, setToken] = useState<string | null>(null);
 
   useEffect(() => {
-    const storedToken = localStorage.getItem('token');
-    if (storedToken) {
-      setToken(storedToken);
-      // Optionally fetch user data with the token
-    }
+    const fetchSession = async () => {
+      const { data: { session } } = await supabase.auth.getSession();
+      setUser(session?.user || null);
+      setToken(session?.access_token || null);
+    };
+
+    fetchSession();
+
+    const { data: listener } = supabase.auth.onAuthStateChange((event, session) => {
+      setUser(session?.user || null);
+      setToken(session?.access_token || null);
+    });
+
+    return () => {
+      listener.subscription.unsubscribe();
+    };
   }, []);
 
   const login = async (email: string, password: string) => {
     try {
-      console.log('Attempting login...');
-      const response = await axios.post('https://edfrica-backend-supabase.onrender.com/api/users/login', {
-        email,
-        password,
-      });
-      console.log('Login response:', response);
-      const { session } = response.data;
-      setToken(session.access_token);
-      setUser(session.user);
-      localStorage.setItem('token', session.access_token);
+      const { data: { session }, error } = await supabase.auth.signInWithPassword({ email, password });
+      if (error) throw error;
+      setUser(session?.user || null);
+      setToken(session?.access_token || null);
     } catch (error) {
       console.error('Login failed', error);
       throw new Error('Login failed');
     }
   };
 
-  const logout = () => {
+  const logout = async () => {
+    await supabase.auth.signOut();
     setUser(null);
     setToken(null);
-    localStorage.removeItem('token');
   };
 
   return (
