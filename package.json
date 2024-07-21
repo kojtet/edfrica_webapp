@@ -1,26 +1,20 @@
 {
-  "homepage": ".",
-  "name": "quiz-app",
+  "name": "webapp",
   "version": "0.1.0",
   "private": true,
   "dependencies": {
-    "@supabase/supabase-js": "^2.44.4",
-    "@testing-library/jest-dom": "^5.16.5",
+    "@testing-library/jest-dom": "^5.17.0",
     "@testing-library/react": "^13.4.0",
     "@testing-library/user-event": "^13.5.0",
-    "@types/jest": "^27.5.2",
-    "@types/node": "^16.18.12",
-    "@types/react": "^18.3.3",
-    "@types/react-dom": "^18.3.0",
     "axios": "^1.7.2",
-    "dotenv": "^16.4.5",
-    "prismjs": "^1.29.0",
-    "react": "^18.2.0",
-    "react-dom": "^18.2.0",
+    "chance": "^1.1.12",
+    "change": "^0.0.0",
+    "jwt-decode": "^4.0.0",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "react-icons": "^5.2.1",
     "react-router-dom": "^6.25.1",
     "react-scripts": "5.0.1",
-    "styled-components": "^5.3.6",
-    "typescript": "^4.9.5",
     "web-vitals": "^2.1.4"
   },
   "scripts": {
@@ -48,8 +42,6 @@
     ]
   },
   "devDependencies": {
-    "@types/prismjs": "^1.26.0",
-    "@types/react-router-dom": "^5.3.3",
-    "@types/styled-components": "^5.1.26"
+    "tailwindcss": "^3.4.6"
   }
 }
