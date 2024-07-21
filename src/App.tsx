@@ -12,6 +12,7 @@ import LoginScreen from './components/LoginScreen';
 import PrivateRoute from './components/PrivateRoutes';
 import PublicRoute from './components/PublicRoutes';
 import UserHome from './components/UserHome';
+import QuizDetailsScreen from './components/QuizDetailsScreen';
 
 function App() {
   const [currentTheme, setCurrentTheme] = useState(() => {
@@ -39,6 +40,7 @@ function App() {
               </Route>
               <Route element={<PrivateRoute />}>
                 <Route path="/" element={<UserHome />} />
+                <Route path="/quiz-details" element={<QuizDetailsScreen />} />
                 <Route path="/*" element={<Main />} />
               </Route>
             </Routes>

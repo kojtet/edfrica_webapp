@@ -1,17 +1,19 @@
-import { FC, useEffect, useState } from 'react'
-import styled from 'styled-components'
+import { FC, useEffect, useState } from 'react';
+import styled from 'styled-components';
+import axios from 'axios';
 
-import { AppLogo, CheckIcon, Next, TimerIcon } from '../../config/icons'
-import { useQuiz } from '../../context/QuizContext'
-import { useTimer } from '../../hooks'
-import { device } from '../../styles/BreakPoints'
-import { PageCenter } from '../../styles/Global'
-import { ScreenTypes } from '../../types'
+import { AppLogo, CheckIcon, Next, TimerIcon } from '../../config/icons';
+import { useQuiz } from '../../context/QuizContext';
+import { useAuth } from '../../context/AuthContext';
+import { useTimer } from '../../hooks';
+import { device } from '../../styles/BreakPoints';
+import { PageCenter } from '../../styles/Global';
+import { ScreenTypes } from '../../types';
 
-import Button from '../ui/Button'
-import ModalWrapper from '../ui/ModalWrapper'
-import Question from './Question'
-import QuizHeader from './QuizHeader'
+import Button from '../ui/Button';
+import ModalWrapper from '../ui/ModalWrapper';
+import Question from './Question';
+import QuizHeader from './QuizHeader';
 
 const QuizContainer = styled.div<{ selectedAnswer: boolean }>`
   width: 900px;
@@ -35,7 +37,7 @@ const QuizContainer = styled.div<{ selectedAnswer: boolean }>`
       }
     }
   }
-`
+`;
 
 const LogoContainer = styled.div`
   margin-top: 50px;
@@ -48,7 +50,7 @@ const LogoContainer = styled.div`
       height: 80px;
     }
   }
-`
+`;
 
 const ButtonWrapper = styled.div`
   position: absolute;
@@ -61,13 +63,13 @@ const ButtonWrapper = styled.div`
     width: 90%;
     right: 15px;
   }
-`
+`;
 
 const QuestionScreen: FC = () => {
-  const [activeQuestion, setActiveQuestion] = useState<number>(0)
-  const [selectedAnswer, setSelectedAnswer] = useState<string[]>([])
-  const [showTimerModal, setShowTimerModal] = useState<boolean>(false)
-  const [showResultModal, setShowResultModal] = useState<boolean>(false)
+  const [activeQuestion, setActiveQuestion] = useState<number>(0);
+  const [selectedAnswer, setSelectedAnswer] = useState<string[]>([]);
+  const [showTimerModal, setShowTimerModal] = useState<boolean>(false);
+  const [showResultModal, setShowResultModal] = useState<boolean>(false);
 
   const {
     questions,
@@ -78,65 +80,97 @@ const QuestionScreen: FC = () => {
     timer,
     setTimer,
     setEndTime,
-  } = useQuiz()
+    setQuizDetails,
+  } = useQuiz();
 
-  const currentQuestion = questions[activeQuestion]
+  const { token } = useAuth();
 
-  const { question, type, choices, code, image, correctAnswers } = currentQuestion
+  const currentQuestion = questions[activeQuestion];
+
+  const { question, type, options, code, image, answer } = currentQuestion || {};
 
   const onClickNext = () => {
-    const isMatch: boolean =
-      selectedAnswer.length === correctAnswers.length &&
-      selectedAnswer.every((answer) => correctAnswers.includes(answer))
+    const isMatch: boolean = selectedAnswer.length === (answer ? 1 : 0) && selectedAnswer[0] === answer;
 
     // adding selected answer, and if answer matches key to result array with current question
-    setResult([...result, { ...currentQuestion, selectedAnswer, isMatch }])
+    setResult([...result, { ...currentQuestion, selectedAnswer, isMatch }]);
 
     if (activeQuestion !== questions.length - 1) {
-      setActiveQuestion((prev) => prev + 1)
+      setActiveQuestion((prev) => prev + 1);
     } else {
       // how long does it take to finish the quiz
-      const timeTaken = quizDetails.totalTime - timer
-      setEndTime(timeTaken)
-      setShowResultModal(true)
+      const timeTaken = quizDetails.totalTime - timer;
+      setEndTime(timeTaken);
+      setShowResultModal(true);
     }
-    setSelectedAnswer([])
-  }
+    setSelectedAnswer([]);
+  };
 
   const handleAnswerSelection = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, checked } = e.target
+    const { name, checked } = e.target;
 
     if (type === 'MAQs') {
       if (selectedAnswer.includes(name)) {
         setSelectedAnswer((prevSelectedAnswer) =>
           prevSelectedAnswer.filter((element) => element !== name)
-        )
+        );
       } else {
-        setSelectedAnswer((prevSelectedAnswer) => [...prevSelectedAnswer, name])
+        setSelectedAnswer((prevSelectedAnswer) => [...prevSelectedAnswer, name]);
       }
     }
 
     if (type === 'MCQs' || type === 'boolean') {
       if (checked) {
-        setSelectedAnswer([name])
+        setSelectedAnswer([name]);
       }
     }
-  }
+  };
 
   const handleModal = () => {
-    setCurrentScreen(ScreenTypes.ResultScreen)
-    document.body.style.overflow = 'auto'
-  }
+    setCurrentScreen(ScreenTypes.ResultScreen);
+    document.body.style.overflow = 'auto';
+  };
 
   // to prevent scrolling when modal is opened
   useEffect(() => {
     if (showTimerModal || showResultModal) {
-      document.body.style.overflow = 'hidden'
+      document.body.style.overflow = 'hidden';
     }
-  }, [showTimerModal, showResultModal])
+  }, [showTimerModal, showResultModal]);
+
+  // Fetch quiz questions and set quiz details
+  useEffect(() => {
+    const fetchQuizQuestions = async () => {
+      try {
+        const response = await axios.get(
+          `https://edfrica-backend-supabase.onrender.com/api/quizzes/${quizDetails.selectedQuizTopic}/questions`,
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
+
+        if (response.data.length > 0) {
+          const { time_limit, course_name } = response.data[0];
+          setQuizDetails({
+            totalQuestions: response.data.length,
+            totalScore: 100, // Set this to a default or calculated value
+            totalTime: time_limit * 60, // Assuming time_limit is in minutes
+            selectedQuizTopic: course_name,
+          });
+          setTimer(time_limit * 60); // Set the timer based on the time limit
+        }
+      } catch (error) {
+        console.error('Failed to fetch quiz questions', error);
+      }
+    };
+
+    fetchQuizQuestions();
+  }, [quizDetails.selectedQuizTopic, setQuizDetails, setTimer, token]);
 
   // timer hooks, handle conditions related to time
-  useTimer(timer, quizDetails, setEndTime, setTimer, setShowTimerModal, showResultModal)
+  useTimer(timer, quizDetails, setEndTime, setTimer, setShowTimerModal, showResultModal);
 
   return (
     <PageCenter>
@@ -153,7 +187,7 @@ const QuestionScreen: FC = () => {
           question={question}
           code={code}
           image={image}
-          choices={choices}
+          choices={options}
           type={type}
           handleAnswerSelection={handleAnswerSelection}
           selectedAnswer={selectedAnswer}
@@ -179,7 +213,7 @@ const QuestionScreen: FC = () => {
         />
       )}
     </PageCenter>
-  )
-}
+  );
+};
 
-export default QuestionScreen
+export default QuestionScreen;

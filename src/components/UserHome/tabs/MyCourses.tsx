@@ -2,10 +2,11 @@ import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
 import { useAuth } from '../../../context/AuthContext';
 import axios from 'axios';
+import { useNavigate } from 'react-router-dom';
 
 const Container = styled.div`
-  display: flex;
-  flex-wrap: wrap;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
   gap: 20px;
   justify-content: center;
   padding: 20px;
@@ -26,7 +27,6 @@ const Card = styled.div`
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
   padding: 20px;
   text-align: center;
-  width: 300px;
   text-decoration: none;
   color: inherit;
   transition: transform 0.2s;
@@ -124,6 +124,7 @@ const MyCourses: React.FC = () => {
   const [selectedCourse, setSelectedCourse] = useState<any | null>(null);
   const [quizzes, setQuizzes] = useState<Quiz[]>([]);
   const [loadingQuizzes, setLoadingQuizzes] = useState<boolean>(false);
+  const navigate = useNavigate();
 
   useEffect(() => {
     console.log('User Info:', user);
@@ -182,8 +183,7 @@ const MyCourses: React.FC = () => {
   };
 
   const handleQuizClick = (quizId: string) => {
-    console.log(`Quiz clicked: ${quizId}`);
-    // Implement the logic to navigate to the quiz or show quiz details
+    navigate(`/quiz/${quizId}`);
   };
 
   if (loading) {

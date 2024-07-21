@@ -1,61 +1,55 @@
-import { FC } from 'react'
-import styled from 'styled-components'
-
-import { useQuiz } from '../../../context/QuizContext'
-import { device } from '../../../styles/BreakPoints'
-import { HighlightedText } from '../../../styles/Global'
-import { convertSeconds } from '../../../utils/helpers'
-import { Result } from '../../../types'
+import React from 'react';
+import styled from 'styled-components';
+import { HighlightedText } from '../../../styles/Global';
+import { convertSeconds } from '../../../utils/helpers';
+import { Result } from '../../../types';
 
 const ResultOverviewStyle = styled.div`
   text-align: center;
-  margin-bottom: 70px;
-  @media ${device.md} {
-    margin-bottom: 30px;
-  }
-  p {
-    margin-top: 15px;
-    font-weight: 500;
-    font-size: 18px;
-  }
-`
+  margin-top: 30px;
+`;
+
+const ResultText = styled.p`
+  font-size: 18px;
+  color: ${({ theme }) => theme.colors.primaryText};
+`;
 
 interface ResultOverviewProps {
-  result: Result[]
+  result: Result[];
+  endTime: number;
+  quizDetails: {
+    totalQuestions: number;
+    totalScore: number;
+    totalTime: number;
+  };
 }
 
-const ResultOverview: FC<ResultOverviewProps> = ({ result }) => {
-  const { quizDetails, endTime } = useQuiz()
-
-  const totalQuestionAttempted = result.length
-
+const ResultOverview: React.FC<ResultOverviewProps> = ({ result, endTime, quizDetails }) => {
   const obtainedScore = result
-    .filter((item) => item.isMatch && typeof item.score === 'number')
-    .reduce((accumulator, currentValue) => accumulator + (currentValue.score || 0), 0)
+    .filter((item) => item.isMatch)
+    .reduce((accumulator, currentValue) => accumulator + (currentValue.score || 0), 0);
 
-  // Passed if 60 or more than 60% marks
-  const calculateStatus =
-    (obtainedScore / quizDetails.totalScore) * 100 >= 60 ? 'Passed' : 'Failed'
+  const calculateStatus = () => {
+    const percentage = (obtainedScore / quizDetails.totalScore) * 100;
+    return percentage >= 60 ? 'Passed' : 'Failed';
+  };
 
   return (
     <ResultOverviewStyle>
-      <p>
-        You attempted questions:{' '}
-        <HighlightedText> {totalQuestionAttempted} </HighlightedText>/{' '}
-        {quizDetails.totalQuestions}
-      </p>
-      <p>
-        Score secured:<HighlightedText> {obtainedScore} </HighlightedText>/{' '}
-        {quizDetails.totalScore}
-      </p>
-      <p>
-        Time Spent:<HighlightedText> {convertSeconds(endTime)} </HighlightedText>
-      </p>
-      <p>
-        Status:<HighlightedText> {calculateStatus}</HighlightedText>
-      </p>
+      <ResultText>
+        Total Questions Attempted: <HighlightedText>{result.length}</HighlightedText>
+      </ResultText>
+      <ResultText>
+        Total Score: <HighlightedText>{obtainedScore}</HighlightedText>
+      </ResultText>
+      <ResultText>
+        Total Time Taken: <HighlightedText>{convertSeconds(endTime)}</HighlightedText>
+      </ResultText>
+      <ResultText>
+        Status: <HighlightedText>{calculateStatus()}</HighlightedText>
+      </ResultText>
     </ResultOverviewStyle>
-  )
-}
+  );
+};
 
-export default ResultOverview
+export default ResultOverview;

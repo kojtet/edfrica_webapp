@@ -1,4 +1,4 @@
-import React, { ReactNode, useEffect, useState } from 'react';
+import { ReactNode, useEffect, useState } from 'react';
 import { quiz } from '../data/QuizQuestions';
 import { QuizContextTypes, Result, ScreenTypes } from '../types';
 import { QuizContext, initialState } from './QuizContext';
@@ -7,55 +7,41 @@ type QuizProviderProps = {
   children: ReactNode;
 };
 
-const QuizProvider: React.FC<QuizProviderProps> = ({ children }) => {
+const QuizProvider = ({ children }: QuizProviderProps) => {
+  const [currentScreen, setCurrentScreen] = useState<ScreenTypes>(initialState.currentScreen);
+  const [quizTopic, setQuizTopic] = useState<string>(initialState.quizTopic);
+  const [questions, setQuestions] = useState<any[]>(initialState.questions);
+  const [result, setResult] = useState<Result[]>(initialState.result);
   const [timer, setTimer] = useState<number>(initialState.timer);
   const [endTime, setEndTime] = useState<number>(initialState.endTime);
-  const [quizTopic, setQuizTopic] = useState<string>(initialState.quizTopic);
-  const [result, setResult] = useState<Result[]>(initialState.result);
-  const [currentScreen, setCurrentScreen] = useState<ScreenTypes>(initialState.currentScreen);
+  const [quizDetails, setQuizDetails] = useState(initialState.quizDetails);
 
-  const [questions, setQuestions] = useState(quiz[initialState.quizTopic].questions);
-
-  const {
-    questions: quizQuestions,
-    totalQuestions,
-    totalTime,
-    totalScore,
-  } = quiz[quizTopic];
-
-  const selectQuizTopic = (topic: string) => {
-    setQuizTopic(topic);
+  const selectQuizTopic = (type: string) => {
+    setQuizTopic(type);
   };
 
-  useEffect(() => {
-    setTimer(totalTime);
-    setQuestions(quizQuestions);
-  }, [quizTopic]);
-
-  const quizDetails = {
-    totalQuestions,
-    totalScore,
-    totalTime,
-    selectedQuizTopic: quizTopic,
-  };
-
-  const quizContextValue: QuizContextTypes = {
-    currentScreen,
-    setCurrentScreen,
-    quizTopic,
-    selectQuizTopic,
-    questions,
-    setQuestions,
-    result,
-    setResult,
-    quizDetails,
-    timer,
-    setTimer,
-    endTime,
-    setEndTime,
-  };
-
-  return <QuizContext.Provider value={quizContextValue}>{children}</QuizContext.Provider>;
+  return (
+    <QuizContext.Provider
+      value={{
+        currentScreen,
+        setCurrentScreen,
+        quizTopic,
+        selectQuizTopic,
+        questions,
+        setQuestions,
+        result,
+        setResult,
+        timer,
+        setTimer,
+        endTime,
+        setEndTime,
+        quizDetails,
+        setQuizDetails,
+      }}
+    >
+      {children}
+    </QuizContext.Provider>
+  );
 };
 
 export default QuizProvider;
