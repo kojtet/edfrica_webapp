@@ -11,8 +11,6 @@ export const AuthProvider = ({ children }) => {
     return savedUser ? JSON.parse(savedUser) : null;
   });
 
-  const [access, setAccess] = useState()
-
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -33,11 +31,9 @@ export const AuthProvider = ({ children }) => {
       const { session, user } = response.data;
       const userData = { ...user, token: session.session.access_token };
 
-      console.log(session.session.access_token)
-
       setUser(userData);
       localStorage.setItem('user', JSON.stringify(userData));
-      navigate('/dashboard');
+      navigate('/my-courses');
     } catch (error) {
       console.error('Login failed', error);
     }

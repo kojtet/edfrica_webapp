@@ -1,34 +1,35 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
+import { useParams } from 'react-router-dom';
 import { FaSearch, FaBell, FaUserCircle } from 'react-icons/fa';
 import { useAuth } from '../context/AuthContext';
-import { Link } from 'react-router-dom';
 
-const MyCourses = () => {
+const CourseQuizzes = () => {
   const { user } = useAuth();
-  const [courses, setCourses] = useState([]);
+  const { courseId } = useParams();
+  const [quizzes, setQuizzes] = useState([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const fetchCourses = async () => {
+    const fetchQuizzes = async () => {
       if (user) {
         try {
-          const response = await axios.get(`https://edfrica-backend-supabase.onrender.com/api/courses/student/${user.uid}`, {
+          const response = await axios.get(`https://edfrica-backend-supabase.onrender.com/api/quizzes/course/${courseId}`, {
             headers: {
               Authorization: `Bearer ${user.token}`,
             },
           });
-          setCourses(response.data);
+          setQuizzes(response.data);
         } catch (error) {
-          console.error('Failed to fetch courses', error);
+          console.error('Failed to fetch quizzes', error);
         } finally {
           setLoading(false);
         }
       }
     };
 
-    fetchCourses();
-  }, [user]);
+    fetchQuizzes();
+  }, [user, courseId]);
 
   if (loading) {
     return <div>Loading...</div>;
@@ -51,25 +52,23 @@ const MyCourses = () => {
           <span className="text-gray-600">Hello, {user.first_name}</span>
         </div>
       </div>
-      <h1 className="text-4xl font-bold mb-2"></h1>
-      <p className="text-gray-700 mb-6"></p>
-      <div className="flex justify-between items-center mb-8">
-        <h2 className="text-2xl font-semibold">Enrolled Courses</h2>
-      </div>
+      <h1 className="text-4xl font-bold mb-2">Quizzes</h1>
+      <p className="text-gray-700 mb-6">Here are the quizzes for the selected course:</p>
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-        {courses.map(course => (
-          <Link key={course.id} to={`/courses/${course.id}`} className="bg-white rounded-lg shadow-xl overflow-hidden transform transition duration-200 hover:scale-105">
-            <img src={course.thumbnail} alt={course.course_name} className="w-full h-32 object-cover" />
+        {quizzes.map(quiz => (
+          <div key={quiz.id} className="bg-white rounded-lg shadow-xl overflow-hidden transform transition duration-200 hover:scale-105">
             <div className="p-4">
-              <h2 className="text-lg font-semibold">{course.course_name}</h2>
-              <p className="text-gray-600 mb-2 truncate">{12} Quizzes</p>
-
+              <h2 className="text-lg font-semibold">{quiz.title}</h2>
+              <p className="text-gray-600 mb-2 truncate">{quiz.description}</p>
+              <button className="bg-blue-500 text-white py-2 px-4 rounded-lg hover:bg-blue-600 transition duration-200">
+                Start Quiz
+              </button>
             </div>
-          </Link>
+          </div>
         ))}
       </div>
     </div>
   );
 };
 
-export default MyCourses;
+export default CourseQuizzes;

@@ -10,6 +10,7 @@ import MyProfile from './pages/MyProfile';
 import AiChat from './pages/AiChat';
 import Rankings from './pages/Rankings';
 import Settings from './pages/Settings';
+import CourseQuizzes from './pages/CourseQuizzes'; // Import the new component
 import Layout from './components/Layout';
 
 function App() {
@@ -27,6 +28,7 @@ function App() {
             <Route path="ai-chat" element={<AiChat />} />
             <Route path="rankings" element={<Rankings />} />
             <Route path="settings" element={<Settings />} />
+            <Route path="courses/:courseId" element={<CourseQuizzes />} /> {/* Add the new route */}
           </Route>
         </Routes>
       </AuthProvider>
